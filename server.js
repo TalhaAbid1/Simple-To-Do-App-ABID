@@ -15,52 +15,56 @@ client.connect(async (err) => {
 
 app.use(express.urlencoded({ extended: false }))  
 app.get("/", (req, res) => {
-  // Static Method 
-  // res.sendFile(path.join(__dirname,'Public/Home.html'))
+    db.find().toArray(async (err, items)=> {
+      // Static Method 
+      // res.sendFile(path.join(__dirname,'Public/Home.html'))
 
-  // Dynamic method 
-  res.send(`<!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Simple To-Do App | ABID </title>
-      <link rel="icon" type="image/x-icon" href="res/favicon.ico">
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    </head>
-    <body style="background-color:wheat;">
-      <div class="container">
-        <h1 class="display-4 text-center py-1">To-Do App</h1>
-        
-        <div class="jumbotron p-3 shadow-sm">
-        <form action="/getNewItem" method="POST">
-        <div class="d-flex align-items-center">
-          <input name="item" autofocus autocomplete="off" class="form-control mr-3" type="text" style="flex: 1;">
-          <button class="btn btn-success">Add New Item</button>
-        </div>
-      </form>
-        </div>
-        
-        <ul class="list-group">
-          <li  style="background-color:skyblue  ;  border: none;" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
-            <span class="item-text">Fake example item #1</span>
-            <div>
-              <button class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
-              <button class="delete-me btn btn-danger btn-sm">Delete</button>
-            </div>
-          </li>
-        </ul>
-        
-      </div>
-      <!-- Footer -->
-      <footer style="position: fixed; bottom: 0; width: 100%; background-color: skyblue;">
-          <div class="footer-copyright text-center py-3">© 2022 Copyright:
-              <a href="https://github.com/talhaAbid1"  target="_blank" rel="noopener noreferrer"> ABID</a>
+      // Dynamic method 
+      await res.send(`<!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Simple To-Do App | ABID </title>
+        <link rel="icon" type="image/x-icon" href="res/favicon.ico">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+      </head>
+      <body style="background-color:wheat;">
+        <div class="container">
+          <h1 class="display-4 text-center py-1">To-Do App | <b><i>ABID</i></b></h1>
+          
+          <div class="jumbotron p-3 shadow-sm">
+          <form action="/getNewItem" method="POST">
+          <div class="d-flex align-items-center">
+            <input name="item" autofocus autocomplete="off" class="form-control mr-3" type="text" style="flex: 1;">
+            <button class="btn btn-success">Add New Item</button>
           </div>
-      </footer>
-  
-    </body>
-    </html>`);
+        </form>
+          </div>
+          
+          <ul class="list-group">
+          ${items.map((item)=>{
+            return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+                      <span class="item-text"> ${item.name}</span>
+                      <div>
+                        <button class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
+                        <button class="delete-me btn btn-danger btn-sm">Delete</button>
+                      </div>
+                    </li>`
+          }).join("")}
+          </ul>
+          
+        </div>
+        <!-- Footer -->
+        <footer style="position: fixed; bottom: 0; width: 100%; background-color: skyblue;">
+            <div class="footer-copyright text-center py-3">© 2022 Copyright:
+                <a href="https://github.com/talhaAbid1"  target="_blank" rel="noopener noreferrer"> ABID</a>
+            </div>
+        </footer>
+
+      </body>
+      </html>`);
+    })
 });
 
 app.post("/getNewItem", async function (req, res) {
