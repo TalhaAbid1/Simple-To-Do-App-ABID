@@ -14,6 +14,7 @@ client.connect(async (err) => {
 });
 
 app.use(express.urlencoded({ extended: false }))  
+
 app.get("/", (req, res) => {
     db.find().toArray(async (err, items)=> {
       // Static Method 
@@ -31,7 +32,7 @@ app.get("/", (req, res) => {
       </head>
       <body style="background-color:wheat;">
         <div class="container">
-          <h1 class="display-4 text-center py-1">To-Do App | <b><i>ABID</i></b></h1>
+          <h1 class="display-4 text-center py-1">To-Do App | <b><i> <a href="https://github.com/talhaAbid1"  target="_blank" rel="noopener noreferrer"> ABID</a></i></b></h1>
           
           <div class="jumbotron p-3 shadow-sm">
           <form action="/getNewItem" method="POST">
@@ -42,8 +43,8 @@ app.get("/", (req, res) => {
         </form>
           </div>
           
-          <ul class="list-group">
-          ${items.map((item)=>{
+          <ul class="list-group mb-5">
+          ${items.map(function(item){
             return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
                       <span class="item-text"> ${item.name}</span>
                       <div>
@@ -55,15 +56,8 @@ app.get("/", (req, res) => {
           </ul>
           
         </div>
-        <!-- Footer -->
-        <footer style="position: fixed; bottom: 0; width: 100%; background-color: skyblue;">
-            <div class="footer-copyright text-center py-3">© 2022 Copyright:
-                <a href="https://github.com/talhaAbid1"  target="_blank" rel="noopener noreferrer"> ABID</a>
-            </div>
-        </footer>
-
       </body>
-      </html>`);
+    </html>`);
     })
 });
 
