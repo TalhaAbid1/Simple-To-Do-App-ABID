@@ -1,27 +1,35 @@
 const express = require("express");
-const path = require('path')
+// const path = require('path')
 const dotenv = require("dotenv");
 dotenv.config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { homedir } = require("os");
-const { METHODS } = require("http");
+// const { METHODS } = require("http");
+// const { Script } = require("vm");
 
 const app = express();
 var db;
+
+app.use(express.static("public"))  
+
+
 const client = new MongoClient(process.env.CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1, });
 client.connect(async (err) => {
   db = await client.db("todoapp").collection("items");
+  app.listen(3000);
+  console.log("why");
 });
 
+app.use(express.json())
 app.use(express.urlencoded({ extended: false }))  
 
 app.get("/", (req, res) => {
-    db.find().toArray(async (err, items)=> {
+    db.find().toArray(function(err, items){
       // Static Method 
       // res.sendFile(path.join(__dirname,'Public/Home.html'))
 
       // Dynamic method 
-      await res.send(`<!DOCTYPE html>
+      res.send(`<!DOCTYPE html>
       <html>
       <head>
         <meta charset="UTF-8">
@@ -43,19 +51,20 @@ app.get("/", (req, res) => {
         </form>
           </div>
           
-          <ul class="list-group mb-5">
+          <ul style="margin-bottom: 10px;" class="list-group">
           ${items.map(function(item){
-            return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+            return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between mb-1 ">
                       <span class="item-text"> ${item.name}</span>
                       <div>
-                        <button class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
+                        <button data-id=${item._id} class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
                         <button class="delete-me btn btn-danger btn-sm">Delete</button>
                       </div>
                     </li>`
           }).join("")}
           </ul>
-          
         </div>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <Script src="/browser.js"></Script>
       </body>
     </html>`);
     })
@@ -71,4 +80,8 @@ app.post("/getNewItem", async function (req, res) {
   })
 });
 
-app.listen(3000);
+app.post('/update',function(req, res){
+  db.findOneAndUpdate({_id: ObjectId(req.body.id)},{$set:{name:req.body.updated}},function(){
+    res.send("Successfully Updated")
+  })
+})
