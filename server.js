@@ -2,8 +2,8 @@ const express = require("express");
 // const path = require('path')
 const dotenv = require("dotenv");
 dotenv.config();
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const { homedir } = require("os");
+const { MongoClient, ServerApiVersion, ObjectId, MongoDBNamespace } = require("mongodb");
+// const { homedir } = require("os");
 // const { METHODS } = require("http");
 // const { Script } = require("vm");
 
@@ -57,7 +57,7 @@ app.get("/", (req, res) => {
                       <span class="item-text"> ${item.name}</span>
                       <div>
                         <button data-id=${item._id} class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
-                        <button class="delete-me btn btn-danger btn-sm">Delete</button>
+                        <button data-id=${item._id} class="delete-me btn btn-danger btn-sm">Delete</button>
                       </div>
                     </li>`
           }).join("")}
@@ -83,5 +83,11 @@ app.post("/getNewItem", async function (req, res) {
 app.post('/update',function(req, res){
   db.findOneAndUpdate({_id: ObjectId(req.body.id)},{$set:{name:req.body.updated}},function(){
     res.send("Successfully Updated")
+  })
+})
+
+app.post('/delete' , function(req,res){
+  db.deleteOne({_id: ObjectId(req.body.id)},function(){
+    res.send("Successfully Deleted")
   })
 })
