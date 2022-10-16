@@ -43,15 +43,15 @@ app.get("/", (req, res) => {
           <h1 class="display-4 text-center py-1">To-Do App | <b><i> <a href="https://github.com/talhaAbid1"  target="_blank" rel="noopener noreferrer"> ABID</a></i></b></h1>
           
           <div class="jumbotron p-3 shadow-sm">
-          <form action="/getNewItem" method="POST">
+          <form id=form-field action="/getNewItem" method="POST">
           <div class="d-flex align-items-center">
-            <input name="item" autofocus autocomplete="off" class="form-control mr-3" type="text" style="flex: 1;">
+            <input id=input-field name="item" autofocus autocomplete="off" placeholder="Enter Task Here" class="form-control mr-3" type="text" style="flex: 1;">
             <button class="btn btn-success">Add New Item</button>
           </div>
         </form>
           </div>
           
-          <ul style="margin-bottom: 10px;" class="list-group">
+          <ul id=ul-field class="list-group">
           ${items.map(function(item){
             return `<li class="list-group-item list-group-item-action d-flex align-items-center justify-content-between mb-1 ">
                       <span class="item-text"> ${item.name}</span>
@@ -70,13 +70,9 @@ app.get("/", (req, res) => {
     })
 });
 
-app.post("/getNewItem", async function (req, res) {
-  db.insertOne({ name: req.body.item }, function () {
-    // Static Method Of Calling Page
-    // res.sendFile(path.join(__dirname,'Public/sample.html'))
-    
-    // Dynamic Method
-    res.redirect('/')
+app.post("/getNewItem", function (req, res) {
+  db.insertOne({ name: req.body.input }, function (err, info) {
+      res.json({ _id: info.insertedId.toString(), name: req.body.input })
   })
 });
 
@@ -90,4 +86,4 @@ app.post('/delete' , function(req,res){
   db.deleteOne({_id: ObjectId(req.body.id)},function(){
     res.send("Successfully Deleted")
   })
-})
+})  
