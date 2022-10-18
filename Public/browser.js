@@ -8,6 +8,11 @@ function insertNewOnDisplay(item){
   </li>`
 }
 
+let ourHTML = itemz.map(function(item){
+    return insertNewOnDisplay(item)
+}).join("")
+document.getElementById("ul-field").insertAdjacentHTML("beforeend", ourHTML)
+
 let inputValue = document.getElementById("input-field")
 
 document.getElementById("form-field").addEventListener("submit", function(e) {
