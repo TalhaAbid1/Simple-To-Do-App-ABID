@@ -53,7 +53,7 @@ app.get("/",(req, res) => {
           <div class="jumbotron p-3 shadow-sm">
           <form id=form-field action="/getNewItem" method="POST">
           <div class="d-flex align-items-center">
-            <input id=input-field name="item" autofocus autocomplete="off" placeholder="Enter Task Here" class="form-control mr-3" type="text" style="flex: 1;">
+            <input id=input-field name="item" autofocus autocomplete="off" placeholder="Enter Task Here" required class="form-control mr-3" type="text" style="flex: 1;">
             <button class="btn btn-success">Add New Item</button>
           </div>
         </form>
