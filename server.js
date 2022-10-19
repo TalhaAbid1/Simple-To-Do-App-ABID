@@ -1,11 +1,8 @@
 const express = require("express");
-// const path = require('path')
 const dotenv = require("dotenv");
+const sanitizer = require("sanitize-html")
 dotenv.config();
-const { MongoClient, ServerApiVersion, ObjectId, MongoDBNamespace } = require("mongodb");
-// const { homedir } = require("os");
-// const { METHODS } = require("http");
-// const { Script } = require("vm");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const app = express();
 var db;
@@ -20,10 +17,21 @@ client.connect(async (err) => {
   console.log("why");
 });
 
+app.use(passwordProtection)
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))  
 
-app.get("/", (req, res) => {
+function passwordProtection(req, res, next){
+  res.set('WWW-Authenticate','basic realm="todp app"')
+  if(req.headers.authorization  == "Basic QUJJRDphbHBoYQ=="){
+    next()
+  }
+  else{
+    res.status(401).send(`<h1>Authentication Failed<br>UserName & Password Required To LogIn.</h1>`)
+  }
+}
+
+app.get("/",(req, res) => {
     db.find().toArray(function(err, items){
       // Static Method 
       // res.sendFile(path.join(__dirname,'Public/Home.html'))
@@ -55,7 +63,7 @@ app.get("/", (req, res) => {
           </div>
 
           <script>
-            let itemz = ${JSON.stringify(items)}
+            let itemz = ${JSON.stringify(items)}            
           </script>
 
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -66,13 +74,15 @@ app.get("/", (req, res) => {
 });
 
 app.post("/getNewItem", function (req, res) {
-  db.insertOne({ name: req.body.input }, function (err, info) {
+  let sanitizeFielddata = sanitizer(req.body.input, {allowedTags:[], allowedAttributes:{}})
+  db.insertOne({ name: sanitizeFielddata }, function (err, info) {
       res.json({ _id: info.insertedId.toString(), name: req.body.input })
   })
 });
 
 app.post('/update',function(req, res){
-  db.findOneAndUpdate({_id: ObjectId(req.body.id)},{$set:{name:req.body.updated}},function(){
+  let sanitizeFielddata = sanitizer(req.body.input, {allowedTags:[], allowedAttributes:{}})
+  db.findOneAndUpdate({_id: ObjectId(req.body.id)},{$set:{name: sanitizeFielddata}},function(){
     res.send("Successfully Updated")
   })
 })
@@ -81,4 +91,4 @@ app.post('/delete' , function(req,res){
   db.deleteOne({_id: ObjectId(req.body.id)},function(){
     res.send("Successfully Deleted")
   })
-})  
+})
