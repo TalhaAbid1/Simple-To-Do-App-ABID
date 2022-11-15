@@ -15,10 +15,14 @@ Here Is this Final Working Link Of This File :>  [nth List](http://good.herokuap
 * **password** : alpha
 ---
 
+#### Clone This To Your Personal PC 
+
+##### Follow Given Steps
+
 ```bash
   npm init
 ```
 
-You Need To Create .env file And place Connection String like
+ You Need To Create file named _.env_ And place Connection String like
 
->- CONNECTION = YOUR_CONNECTION_STRING_OF_MongoDB
+>- CONNECTION=YOUR_CONNECTION_STRING_OF_MongoDB
